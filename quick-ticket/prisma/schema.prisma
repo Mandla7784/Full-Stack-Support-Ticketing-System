@@ -9,7 +9,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Example model – replace or extend for your support tickets
+
 model Ticket {
   id          String   @id @default(cuid())
   title       String
