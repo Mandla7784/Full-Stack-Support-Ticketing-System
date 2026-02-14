@@ -1,8 +1,8 @@
+import { redirect } from "next/navigation";
+import { getSession } from "@/lib/auth-server";
 
-const HomePage = () => {
-  return ( 
-    <h1 className="text-4xl text-indigo-300">Welcome to the Home Page</h1>
-   );
+export default async function HomePage() {
+  const session = await getSession();
+  if (session?.user) redirect("/tickets");
+  redirect("/login");
 }
- 
-export default HomePage;

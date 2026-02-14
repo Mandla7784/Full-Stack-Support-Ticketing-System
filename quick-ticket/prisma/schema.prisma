@@ -10,23 +10,75 @@ datasource db {
 
 
 model Ticket {
-  id          String   @id @default(cuid())
+  id          String    @id @default(cuid())
   title       String
   description String?
-  status      String   @default("open")
-  priority    String   @default("medium")
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  status      TicketStatus @default(OPEN)
+  priority    TicketPriority @default(MEDIUM)
+  category    String?   
+  authorId    String
+  assignedToId String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  author     User     @relation("TicketAuthor", fields: [authorId], references: [id], onDelete: Cascade)
+  assignedTo User?    @relation("AssignedTickets", fields: [assignedToId], references: [id], onDelete: SetNull)
+  comments   Comment[]
+
+  @@index([status])
+  @@index([priority])
+  @@index([authorId])
+  @@index([assignedToId])
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  body      String
+  ticketId  String
+  authorId  String
+  createdAt DateTime @default(now())
+
+  ticket Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  author User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([ticketId])
 }
 
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
   password  String
+  name      String?
+  role      UserRole @default(USER)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  authoredTickets   Ticket[]  @relation("TicketAuthor")
+  assignedTickets   Ticket[]   @relation("AssignedTickets")
+  comments         Comment[]
+
   @@index([email])
   @@map("users")
+}
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  WAITING
+  RESOLVED
+  CLOSED
+}
+
+enum TicketPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum UserRole {
+  USER
+  AGENT
+  ADMIN
 }
 
