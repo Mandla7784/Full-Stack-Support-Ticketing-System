@@ -83,3 +83,26 @@ All commands below are run from the **`quick-ticket`** directory.
 | `npm run start`     | Start production server          |
 | `npm run generate`  | Generate Prisma client only      |
 | `npm run db:deploy` | Apply migrations to database     |
+
+## Deployment
+
+### Netlify
+
+1. Push your code to GitHub.
+2. Go to [netlify.com](https://netlify.com) → **Add new site** → **Import an existing project** → connect your repo.
+3. **Build settings:**
+   - **Base directory:** `quick-ticket`
+   - **Build command:** `npm run build`
+   - **Publish directory:** leave as default (Netlify’s Next.js plugin will use it), or `.next` if asked.
+4. **Environment variables** (Site settings → Environment variables):
+   - `DATABASE_URL` – Your Neon Postgres URL
+   - `NEXTAUTH_SECRET` – Random secret (e.g. `openssl rand -base64 32`)
+   - `NEXTAUTH_URL` – Your site URL, e.g. `https://your-site.netlify.app` (set after first deploy if needed)
+5. **Deploy.** Then run migrations once: `cd quick-ticket && npm run db:deploy` (with production `DATABASE_URL` in `.env`).
+
+### Vercel
+
+1. Push to GitHub → [vercel.com](https://vercel.com) → Import repo.
+2. **Root Directory:** `quick-ticket`. **Build command:** `npm run build`.
+3. Add env vars: `DATABASE_URL`, `NEXTAUTH_SECRET`, `NEXTAUTH_URL` (your Vercel URL).
+4. Deploy. Run `npm run db:deploy` once for production DB.

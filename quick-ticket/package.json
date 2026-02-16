@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "postinstall": "echo Run 'npx prisma generate' if EPERM on generate",
     "dev": "next dev",
     "build": "npx prisma generate && npx next build",
     "start": "npx next start",

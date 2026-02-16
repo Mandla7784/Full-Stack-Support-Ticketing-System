@@ -1,10 +1,11 @@
 "use server";
 
 import { getServerSession } from "next-auth";
+import type { TicketPriority } from "@prisma/client";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 
-const PRIORITIES = ["LOW", "MEDIUM", "HIGH", "URGENT"] as const;
+const PRIORITIES: readonly TicketPriority[] = ["LOW", "MEDIUM", "HIGH", "URGENT"];
 
 export type CreateTicketState = {
   error?: string;
@@ -23,8 +24,8 @@ export async function createTicket(
   const title = (formData.get("title") as string)?.trim() ?? "";
   const description = (formData.get("description") as string)?.trim() || null;
   const priorityRaw = formData.get("priority") as string;
-  const priority = PRIORITIES.includes(priorityRaw as (typeof PRIORITIES)[number])
-    ? priorityRaw
+  const priority: TicketPriority = PRIORITIES.includes(priorityRaw as TicketPriority)
+    ? (priorityRaw as TicketPriority)
     : "MEDIUM";
   const category = (formData.get("category") as string)?.trim() || null;
 
@@ -37,7 +38,7 @@ export async function createTicket(
       data: {
         title,
         description,
-        priority,
+        priority: priority as TicketPriority,
         category,
         authorId: session.user.id,
       },

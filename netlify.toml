@@ -1,0 +1,9 @@
+# App lives in quick-ticket/ - set "Base directory" to quick-ticket in Netlify UI
+# Or deploy from quick-ticket folder and use this config there (remove [build.base])
+[build]
+  base = "quick-ticket"
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "20"
