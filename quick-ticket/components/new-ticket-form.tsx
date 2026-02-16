@@ -1,53 +1,43 @@
 "use client";
 
-import { useState } from "react";
+import { useActionState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useFormStatus } from "react-dom";
+import { createTicket } from "@/actions/tickets";
 
 const PRIORITIES = ["LOW", "MEDIUM", "HIGH", "URGENT"] as const;
 const CATEGORIES = ["Technical", "Billing", "General", "Account", "Other"];
 
+function SubmitButton() {
+  const { pending } = useFormStatus();
+  return (
+    <button
+      type="submit"
+      disabled={pending}
+      className="rounded-lg bg-amber-500 px-4 py-2.5 font-medium text-zinc-950 hover:bg-amber-400 disabled:opacity-50 disabled:cursor-not-allowed"
+    >
+      {pending ? "Creating…" : "Create ticket"}
+    </button>
+  );
+}
+
 export function NewTicketForm() {
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [state, formAction] = useActionState(createTicket, null);
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
-    const form = e.currentTarget;
-    const formData = new FormData(form);
-    const title = (formData.get("title") as string)?.trim();
-    const description = (formData.get("description") as string)?.trim() || undefined;
-    const priority = (formData.get("priority") as string) || "MEDIUM";
-    const category = (formData.get("category") as string)?.trim() || undefined;
-
-    if (!title) {
-      setError("Title is required");
-      setLoading(false);
-      return;
+  useEffect(() => {
+    if (state?.id) {
+      router.push(`/tickets/${state.id}`);
+      router.refresh();
     }
-
-    const res = await fetch("/api/tickets", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title, description, priority, category }),
-    });
-    const data = await res.json().catch(() => ({}));
-
-    setLoading(false);
-    if (!res.ok) {
-      setError(data.error ?? "Failed to create ticket");
-      return;
-    }
-    router.push(`/tickets/${data.id}`);
-    router.refresh();
-  }
+  }, [state?.id, router]);
 
   return (
-    <form onSubmit={handleSubmit} className="rounded-xl border border-zinc-800 bg-zinc-900/30 p-6 space-y-4">
-      {error && (
-        <p className="text-sm text-red-400 bg-red-500/10 rounded-lg px-3 py-2">{error}</p>
+    <form action={formAction} className="rounded-xl border border-zinc-800 bg-zinc-900/30 p-6 space-y-4">
+      {state?.error && (
+        <p className="text-sm text-red-400 bg-red-500/10 rounded-lg px-3 py-2">
+          {state.error}
+        </p>
       )}
       <div>
         <label htmlFor="title" className="block text-sm font-medium text-zinc-300 mb-1">Title *</label>
@@ -99,13 +89,7 @@ export function NewTicketForm() {
         </div>
       </div>
       <div className="flex gap-3 pt-2">
-        <button
-          type="submit"
-          disabled={loading}
-          className="rounded-lg bg-amber-500 px-4 py-2.5 font-medium text-zinc-950 hover:bg-amber-400 disabled:opacity-50"
-        >
-          {loading ? "Creating…" : "Create ticket"}
-        </button>
+        <SubmitButton />
         <button
           type="button"
           onClick={() => router.back()}

@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/db";
 import { TicketList } from "@/components/ticket-list";
 import { TicketFilters } from "@/components/ticket-filters";
+import { FaTicketAlt } from "react-icons/fa";
 
 type SearchParams = { status?: string; priority?: string; q?: string };
 
@@ -41,7 +42,10 @@ export default async function TicketsPage({
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <h1 className="text-2xl font-semibold text-white">Support tickets</h1>
+        <h1 className="text-2xl font-semibold text-white flex items-center gap-2">
+          <FaTicketAlt className="w-7 h-7 text-amber-400" />
+          Support tickets
+        </h1>
         <TicketFilters status={status} priority={priority} q={q} />
       </div>
       <TicketList tickets={tickets} total={total} />

@@ -4,6 +4,7 @@ import { compare } from "bcryptjs";
 import { prisma } from "./db";
 
 export const authOptions: NextAuthOptions = {
+  secret: process.env.NEXTAUTH_SECRET || "dev-secret-change-in-production",
   session: { strategy: "jwt", maxAge: 30 * 24 * 60 * 60 },
   pages: { signIn: "/login" },
   providers: [
@@ -41,6 +42,12 @@ export const authOptions: NextAuthOptions = {
         (session.user as { role?: string }).role = token.role as string;
       }
       return session;
+    },
+    redirect({ url, baseUrl }) {
+      const to = url.startsWith("/") ? `${baseUrl}${url}` : url;
+      if (to === baseUrl || to === `${baseUrl}/`) return `${baseUrl}/tickets`;
+      if (new URL(to).origin === baseUrl) return to;
+      return `${baseUrl}/tickets`;
     },
   },
 };

@@ -1,4 +1,6 @@
 // Prisma schema – https://pris.ly/d/prisma-schema
+// This project uses Prisma 6. The `url` property is valid and required in Prisma 6.
+// If your IDE shows "url is no longer supported", the Prisma extension may be using Prisma 7 rules; you can ignore it or set the extension to use the workspace Prisma (node_modules).
 
 generator client {
   provider = "prisma-client-js"
@@ -6,6 +8,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 

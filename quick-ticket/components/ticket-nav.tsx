@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
+import { FaTicketAlt } from "react-icons/fa";
 
 export function TicketNav({ user }: { user: { email?: string | null; name?: string | null } }) {
   const pathname = usePathname();
@@ -14,14 +15,16 @@ export function TicketNav({ user }: { user: { email?: string | null; name?: stri
         <nav className="flex items-center gap-6">
           <Link
             href={base}
-            className={`font-medium ${pathname === base ? "text-amber-400" : "text-zinc-300 hover:text-white"}`}
+            className={`font-medium flex items-center gap-2 ${pathname === base ? "text-amber-400" : "text-zinc-300 hover:text-white"}`}
           >
+            <FaTicketAlt className="w-5 h-5" />
             Tickets
           </Link>
           <Link
             href={`${base}/new`}
-            className={`font-medium ${pathname === `${base}/new` ? "text-amber-400" : "text-zinc-300 hover:text-white"}`}
+            className={`font-medium flex items-center gap-2 ${pathname === `${base}/new` ? "text-amber-400" : "text-zinc-300 hover:text-white"}`}
           >
+            <FaTicketAlt className="w-4 h-4" />
             New ticket
           </Link>
         </nav>
