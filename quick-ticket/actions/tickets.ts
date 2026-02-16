@@ -5,7 +5,20 @@ import type { TicketPriority } from "@prisma/client";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 
-const PRIORITIES: readonly TicketPriority[] = ["LOW", "MEDIUM", "HIGH", "URGENT"];
+function parsePriority(value: string | null): TicketPriority {
+  switch (value) {
+    case "LOW":
+      return "LOW";
+    case "HIGH":
+      return "HIGH";
+    case "URGENT":
+      return "URGENT";
+    case "MEDIUM":
+      return "MEDIUM";
+    default:
+      return "MEDIUM";
+  }
+}
 
 export type CreateTicketState = {
   error?: string;
@@ -23,10 +36,7 @@ export async function createTicket(
 
   const title = (formData.get("title") as string)?.trim() ?? "";
   const description = (formData.get("description") as string)?.trim() || null;
-  const priorityRaw = formData.get("priority") as string;
-  const priority: TicketPriority = PRIORITIES.includes(priorityRaw as TicketPriority)
-    ? (priorityRaw as TicketPriority)
-    : "MEDIUM";
+  const priority = parsePriority(formData.get("priority") as string | null);
   const category = (formData.get("category") as string)?.trim() || null;
 
   if (!title) {
