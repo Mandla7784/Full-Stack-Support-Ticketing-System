@@ -3,7 +3,8 @@
 // If your IDE shows "url is no longer supported", the Prisma extension may be using Prisma 7 rules; you can ignore it or set the extension to use the workspace Prisma (node_modules).
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
 }
 
 datasource db {
