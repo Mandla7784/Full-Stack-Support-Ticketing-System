@@ -1,3 +1,4 @@
+import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { TicketList } from "@/components/ticket-list";
 import { TicketFilters } from "@/components/ticket-filters";
@@ -15,7 +16,7 @@ export default async function TicketsPage({
   const priority = params.priority ?? "";
   const q = (params.q ?? "").trim();
 
-  const where: Parameters<typeof prisma.ticket.findMany>[0]["where"] = {};
+  const where: Prisma.TicketWhereInput = {};
   if (status) where.status = status as "OPEN" | "IN_PROGRESS" | "WAITING" | "RESOLVED" | "CLOSED";
   if (priority) where.priority = priority as "LOW" | "MEDIUM" | "HIGH" | "URGENT";
   if (q) {
